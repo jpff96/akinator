@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+{% load static %}
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>AkinUM</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="{% static 'css/akin.css' %}">
+</head>
+
+<body>
+    <header>
+        <img src="/static/images/logo_akinator.png" alt="">
+    </header>
+    <div id="answer_div">
+        <div id="text_answer">
+            <p type='text'>Estas pensando en:</p>
+        </div>
+        <form> 
+            <button id="wrong" formaction="{% url 'akinator-question' %}">
+                NO
+            </button> 
+        </form>
+        <form>
+            <button id="correct" formaction="{% url 'akinator-home' %}">
+                SI
+            </button>
+        </form>
+    </div>
+    <footer>
+
+    </footer>
+</body>
+
+</html>
