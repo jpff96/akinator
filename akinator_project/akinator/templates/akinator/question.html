@@ -25,8 +25,19 @@
             <p id="questionText">ACA VAN LAS PREGUNTAS</p>
         </div>
         <div id="answers">
-            <button id="yes">Si</button>
-            <button id="no">No</button>
+            <form class=form_yes action="{% url 'prototipo_akinator' %}" method="post">
+                {% csrf_token %}
+                {{ form.s1_q5_resin_type }}
+                <button id="yes" type="submit" name="yes" value="Si">
+                    Si
+                </button>
+            </form>
+
+            <form class=form_yes>
+                <button id="no" value='No' formaction="{% url 'prototipo_akinator' %}">
+                    No
+                </button>
+            </form>
         </div>
     </div>
     
