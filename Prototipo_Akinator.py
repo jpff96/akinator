@@ -40,14 +40,24 @@ while np.size(candidatos,0) > 1:
         resp = input("")
     if resp == 'Si':
         indexes = np.argwhere(candidatos==caracterisitica)
-        filas = indexes[0]
-        print(filas)
-        print(indexes)
-        eliminar = np.subtract(np.array([1,np.size(candidatos,0)]),filas)
-        print(eliminar[0])
+        filas = np.zeros(len(indexes), dtype=int)
+        contador = 0
+        for j in indexes:
+            filas[contador] = j[0]
+            contador = contador + 1
+        contador = 0
+        ##ESTAMOS BIEN HASTA ACA
+        eliminar = np.setdiff1d(np.arange(0,np.size(candidatos,0),1),filas)
+       # eliminar = np.subtract(np.arange(0,np.size(candidatos,0),1),filas)
     if resp == 'No':
         indexes = np.argwhere(candidatos==caracterisitica)
-        eliminar = indexes[0]
+        filas = np.zeros(len(indexes), dtype=int)
+        contador = 0
+        for j in indexes:
+            filas[contador] = j[0]
+            contador = contador + 1
+        contador = 0
+        eliminar = filas
     [estado, candidatos] = calcular_estado.calcular_estado(candidatos, opciones, eliminar)
     estado[pos_caract] = 0 
 
