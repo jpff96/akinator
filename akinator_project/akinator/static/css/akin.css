@@ -1,6 +1,4 @@
-html{
-    height: 100%;
-}
+
 body{
     height: 100%;
     margin: 0
@@ -67,7 +65,6 @@ header > img{
     border-top: 1px solid white;
     border-bottom: 1px solid white;
     text-decoration: none;
-    border-radius: 50%;
     background: darkcyan;
     line-height: 24px;
     font-size: 120%;
@@ -120,37 +117,35 @@ header > img{
 }
 #answers{
     position: absolute;
-    height: 13%;
-    width: 15%;
+    height: 10%;
+    width: 20%;
     top: 45%;
-    left: 56.3%;
-    display: inline-block
+    left: 51%;
 }
 #yes{
-    border-radius: 50%;
     font-family: 'Courier New', Courier, monospace;
-    width: 33%;
-    height: 100%;
+    width: 100%;
+    height: 47%;
     padding: 0;
     background: steelblue;
     color: #fff;
-    box-shadow: 0 6px teal;
+    box-shadow: 0 3px teal;
     transition: none;
     font-size: 115%;
-    border: 0px
+    border: 0px;
+    margin-bottom: 2%
 }
 
 #no{
     font-family: 'Courier New', Courier, monospace;
-    border-radius: 50%;
-    width: 33%;
-    font-size: 115%;
-    height: 100%;
+    width: 100%;
+    height: 47%;
     padding: 0;
     background: steelblue;
     color: #fff;
-    box-shadow: 0 6px teal;
+    box-shadow: 0 3px teal;
     transition: none;
+    font-size: 115%;
     border: 0px
 }
 #questionNumber{
