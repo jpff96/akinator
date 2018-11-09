@@ -4,6 +4,7 @@ import math
 from django.shortcuts import render
 from django.http import HttpResponse
 from akinator.models import Users
+import csv
 
 def init(request):
 	global año_nacimiento
@@ -45,8 +46,8 @@ def init(request):
 	global ayudante
 	ayudante = "¿Es su personaje ayudante de algún curso?"
 	global al_dia
-	al_dia = "¿Está al día con la carrera?"
-	global caracterisitica
+	al_dia = "¿Está con la carrera "
+	global caracteristica
 	global mensaje
 	global primera_vez
 	primera_vez = True
@@ -73,20 +74,18 @@ def init(request):
 	["Al dia", "Me atrase un 02, pero vamo arriba", "Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid"]
 	])
 	global preguntas
-	preguntas = np.array([p_Pelo, p_Deporte, p_Sexo, p_Interior])
+	preguntas = np.array([año_nacimiento,p_Sexo,p_Pelo, altura, p_Deporte, vacaciones, instrumento, p_Interior, ciudad_nacimiento, barrio, rol, materia, asesora, carrera, generacion,asesor, secundaria, fellow, ayudante, al_dia])
 
-    dataReader = csv.reader(open('users.csv'), delimiter=';', quotechar='"')
-	tabla
-    for row in dataReader:
-        user=Users()
-        print(row[0])
+    
 	global tabla
-	tabla = np.array([['Nombre completo','año nacimiento','sexo','color de pelo','altura','deporte','vacaciones','instrumento','int/montevideo','departamento','profesion','materias dadas','asesora','carrera','comienzo carrera','asesor','secundaria','fellow','ayudante','avance carrera']])
-    for row in dataReader:
-        user=Users()
-		print(array)
-        tabla = np.insert(tabla,np.size(tabla,0),row,axis=0)
-	tabla  = np.array([['Nombre', 'Pelo', 'Deporte', 'Sexo', 'Interior'],['Juan', opciones[0,0], opciones[1,0], opciones[2,0], opciones[3,1]],['Pablo', opciones[0,1], opciones[1,1], opciones[2,0], opciones[3,0]],['Maria', opciones[0,2], opciones[1,2], opciones[2,1], opciones[3,1]],['Guillermina', opciones[0,0], opciones[1,2], opciones[2,1], opciones[3,0]],['Ricardo', opciones[0,1], opciones[1,0], opciones[2,0], opciones[3,0]]])
+	tabla = np.array([['Nombre completo','año nacimiento','sexo','color de pelo','altura','deporte','vacaciones','instrumento','int/montevideo','departamento','barrio','profesion','materias dadas','asesora','carrera','comienzo carrera','asesor','secundaria','fellow','ayudante','avance carrera']])
+	dataReader = csv.reader(open("./akinator/static/akinator_data.csv"), delimiter=',', quotechar='"')
+	for row in dataReader:
+		user=Users()
+		if (row[0] == 'Ignacio Blanco' or row[0] == 'Juan Fajardo'):
+			print(row)
+		tabla = np.insert(tabla,np.size(tabla,0),row,axis=0)
+	print (tabla)
 	global repeticiones
 	repeticiones =  np.zeros((np.size(opciones,0),np.size(opciones,1)), dtype=int)
 	global candidatos
@@ -130,29 +129,30 @@ def pregunta_seleccionada(request):
 					min_pos = [i,j]
 
 		pos_caract = min_pos
-		caracterisitica = opciones[pos_caract[0],pos_caract[1]]
+		caracteristica = opciones[pos_caract[0],pos_caract[1]]
 		request.session['pos_caract'] = pos_caract
 		if pos_caract[1] == 4:
 			mensaje = p_Interior
-			request.session['mensaje'] = mensajes
-			request.session['caracteristica'] = caracterisitica
-		else:
-			mensaje = preguntas[pos_caract[0]] + ' ' + caracterisitica + '?'
 			request.session['mensaje'] = mensaje
-			request.session['caracteristica'] = caracterisitica
+			request.session['caracteristica'] = caracteristica
+		else:
+			mensaje = preguntas[pos_caract[0]] + ' ' + caracteristica + '?'
+			request.session['mensaje'] = mensaje
+			request.session['caracteristica'] = caracteristica
 
 def prototipo_akinator(request):
 	resp = request.POST.get("yes")
 
 	candidatos = np.asarray(request.session.get('candidatos', 0))
 	estado = np.asarray(request.session.get('estado', 0))
-	caracterisitica = request.session.get('caracteristica',0)
+	caracteristica = request.session.get('caracteristica',0)
 	pos_caract = request.session.get('pos_caract',0)
 	eliminar = np.asarray(request.session.get('eliminar',0))
 
 	if np.size(candidatos,0) > 1:
 		if resp == 'Si':
-			indexes = np.argwhere(candidatos==caracterisitica)
+
+			indexes = np.argwhere(candidatos==caracteristica)
 			filas = np.zeros(len(indexes), dtype=int)
 			contador = 0
 			for j in indexes:
@@ -163,7 +163,10 @@ def prototipo_akinator(request):
 			request.session['eliminar'] = eliminar.tolist()
 		# eliminar = np.subtract(np.arange(0,np.size(candidatos,0),1),filas)
 		else:
-			indexes = np.argwhere(candidatos==caracterisitica)
+			indexes = np.argwhere(candidatos==caracteristica)
+			print('caracteristica')
+			print(caracteristica)
+			print(candidatos)
 			filas = np.zeros(len(indexes), dtype=int)
 			contador = 0
 			for j in indexes:
@@ -179,11 +182,14 @@ def prototipo_akinator(request):
 			request.session['candidatos'] = candidatos.tolist()
 		
 		repeticiones = np.zeros((np.size(opciones,0),np.size(opciones,1)), dtype=int)
+		print(eliminar)
+		print('candidatos')
+		print(candidatos)
 		for j in range(0,np.size(opciones,0)-1):
 			for k in range(0,np.size(opciones,1)):
-				a = np.argwhere(opciones[i,j] == candidatos)
+				a = np.argwhere(opciones[j,k] == candidatos)
 				if len(a) is not 0:
-					repeticiones[i,j] = sum(sum(a))
+					repeticiones[j,k] = sum(sum(a))
 
 		request.session['estado'] = repeticiones.tolist()
 		estado[pos_caract] = 0 
@@ -206,7 +212,7 @@ def question(request):
 	#MODIFICAR LA PREGUNTA
 
 	context = {'question' : request.session.get('mensaje',0) }
-	print(request.session.get('candidatos',0))
+	#print(request.session.get('candidatos',0))
 
 	if request.session.get('personaje') != None:
 		context = {'personaje' : request.session.get('personaje',0) }

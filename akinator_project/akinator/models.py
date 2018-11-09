@@ -1,5 +1,4 @@
 from django.db import models
-import csv
 # Create your models here.
 
 class Users(models.Model):
@@ -13,6 +12,7 @@ class Users(models.Model):
     instrumento = models.CharField('instrumento', max_length=50)
     int_montevideo = models.CharField('int/montevideo', max_length=50)
     departamento = models.CharField('departamento', max_length=50)
+    barrio = models.CharField('barrio', max_length =50)
     profesion = models.CharField('profesion', max_length=50)
     materias_dadas = models.CharField('materias dadas', max_length=50)
     asesora = models.CharField('asesora', max_length=50)
