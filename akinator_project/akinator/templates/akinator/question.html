@@ -20,12 +20,12 @@
         </div>
         <div id="questionPlace">
             <div id="questionNumber">
-                <div id="number">1</div>
+                <div id="number">{{number}}</div>
             </div>
             <p id="questionText">{{question}} </p>
         </div>
-        <div id="answers" style="position: absolute; height: 10%; width: 20%; top: 45%; left: 51%;">
-            <form class=form_yes action="{% url 'akinator-question' %}" method="post">
+        <div id="answers" >
+            <form class=form_answer action="{% url 'akinator-question' %}" method="post">
                 {% csrf_token %}
                 {{ form.s1_q5_resin_type }}
                 <button id="yes" type="submit" name="yes" value="Si">
@@ -33,7 +33,7 @@
                 </button>
             </form>
 
-            <form class=form_no action="{% url 'akinator-question' %}" method="post">
+            <form class=form_answer action="{% url 'akinator-question' %}" method="post">
                 {% csrf_token %}
                 {{ form.s1_q5_resin_type }}
                 <button id="no" type="submit" value='No' name = "no">

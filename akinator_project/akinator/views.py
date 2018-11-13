@@ -5,6 +5,7 @@ from django.shortcuts import render
 from django.http import HttpResponse
 from akinator.models import Users
 import csv
+import random
 
 def init(request):
 	global año_nacimiento
@@ -46,7 +47,7 @@ def init(request):
 	global ayudante
 	ayudante = "¿Es su personaje ayudante de algún curso?"
 	global al_dia
-	al_dia = "¿Está con la carrera "
+	al_dia = "¿Está con la carrera al día?"
 	global caracteristica
 	global mensaje
 	global primera_vez
@@ -62,7 +63,7 @@ def init(request):
 	["Montevideo", "Interior", "Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid"],
 	["Paysandú", "Salto","Maldonado", "Canelones", "Rivera", "Tacuarembó", "San Jose", "Soriano","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid"],
 	["Carrasco", "Pocitos", "Parque Miramar", "Prado", "Colonia Nicolich", "Cerro", "Malvin", "Centro", "Punta Carretas", "Ituzaingo", "Unión", "Punta Gorda", "Barra de Carrasco","Brazo Oriental","Buceo","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid"],
-	["Soy Estudiante","Soy Profesor", "Soy Funcionario","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid"],	
+	["Estudiante","Profesor", "Funcionario","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid"],	
 	["Sistemas Distribuidos", "Matlab", "Análisis Matemático","Sistemas Lineales","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid"],
 	["Si", "No", "Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid"],
 	["Ingenieria Telematica", "Ingenieria Industrial", "Ingenieria Civil","Ingenieria Informatica","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid"],
@@ -71,12 +72,11 @@ def init(request):
 	["PREU","La Mennais", "Crandon", "Stella Maris College", "Colegio Salesiano", "Scuola Italiana", "Instituto Uruguayo Argentino", "British School", "Canelones", "Colegio Maldonado", "Colegio y liceo nuestra señora del rosario", "Colegio Aleman","IHHC", "Liceo Dptal Nro. 1 Dra. Celia Pomoli", "Juan XXIII", "Colegio Seminario", "Saint Brendan's School", "Liceo 1 Paso de los Toros", "Liceo Damaso", "Liceo 1","Liceo departamental de San José de Mayo", "Elbio Fernández","Santa Rita", "Santa Luisa de Marillac","PUC","Colegio San Pablo","IAVA","Pinar 1"],
 	["Si", "No", "Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid"],
 	["Si", "No", "Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid"],
-	["Al dia", "Me atrase un 02, pero vamo arriba", "Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid"]
+	["Si", "No", "Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid"]
 	])
 	global preguntas
 	preguntas = np.array([año_nacimiento,p_Sexo,p_Pelo, altura, p_Deporte, vacaciones, instrumento, p_Interior, ciudad_nacimiento, barrio, rol, materia, asesora, carrera, generacion,asesor, secundaria, fellow, ayudante, al_dia])
 
-    
 	global tabla
 	tabla = np.array([['Nombre completo','año nacimiento','sexo','color de pelo','altura','deporte','vacaciones','instrumento','int/montevideo','departamento','barrio','profesion','materias dadas','asesora','carrera','comienzo carrera','asesor','secundaria','fellow','ayudante','avance carrera']])
 	dataReader = csv.reader(open("./akinator/static/akinator_data.csv"), delimiter=',', quotechar='"')
@@ -85,7 +85,6 @@ def init(request):
 		if (row[0] == 'Ignacio Blanco' or row[0] == 'Juan Fajardo'):
 			print(row)
 		tabla = np.insert(tabla,np.size(tabla,0),row,axis=0)
-	print (tabla)
 	global repeticiones
 	repeticiones =  np.zeros((np.size(opciones,0),np.size(opciones,1)), dtype=int)
 	global candidatos
@@ -101,6 +100,7 @@ def init(request):
 	candidatos = tabla[1:np.size(tabla,0),0:np.size(tabla,1)]
 	request.session['candidatos'] = candidatos.tolist()
 	request.session['estado'] = estado.tolist()
+	request.session['question_number'] = 1
 
 
 
@@ -121,24 +121,26 @@ def pregunta_seleccionada(request):
 		n = np.size(candidatos,0)
 
 		dif_min = math.inf
+		posibles = np.array([[0,0]])
 		min_pos = np.array([0,0])
 		for i in range(0,np.size(estado,0)):
 			for j in range(0,np.size(estado,1)):
 				if(abs(estado[i,j] - n/2) < dif_min and estado[i,j] !=0):
 					dif_min = abs(estado[i,j] - n/2)
-					min_pos = [i,j]
+					posibles = np.array([[i,j]])
+				if(abs(estado[i,j] - n/2) == dif_min and estado[i,j] !=0):
+					a = [i,j]
+					posibles = np.insert(posibles,np.size(posibles,0),a,axis=0)
 
-		pos_caract = min_pos
+		min_pos = posibles[random.randint(0,len(posibles)-1),:]		
+		pos_caract = min_pos.tolist()
 		caracteristica = opciones[pos_caract[0],pos_caract[1]]
+
 		request.session['pos_caract'] = pos_caract
-		if pos_caract[1] == 4:
-			mensaje = p_Interior
-			request.session['mensaje'] = mensaje
-			request.session['caracteristica'] = caracteristica
-		else:
-			mensaje = preguntas[pos_caract[0]] + ' ' + caracteristica + '?'
-			request.session['mensaje'] = mensaje
-			request.session['caracteristica'] = caracteristica
+		#answersReader = csv.reader(open("./akinator/static/Preguntas.csv"), delimiter=';', quotechar='"')
+		mensaje = preguntas[pos_caract[0]] + ' ' + caracteristica + '?'
+		request.session['mensaje'] = mensaje
+		request.session['caracteristica'] = caracteristica
 
 def prototipo_akinator(request):
 	resp = request.POST.get("yes")
@@ -164,8 +166,6 @@ def prototipo_akinator(request):
 		# eliminar = np.subtract(np.arange(0,np.size(candidatos,0),1),filas)
 		else:
 			indexes = np.argwhere(candidatos==caracteristica)
-			print('caracteristica')
-			print(caracteristica)
 			print(candidatos)
 			filas = np.zeros(len(indexes), dtype=int)
 			contador = 0
@@ -197,6 +197,8 @@ def prototipo_akinator(request):
 		request.session['personaje'] = candidatos[0,0]
 
 def question(request):
+
+	request.session['question_number'] += 1
 	if request.POST.get('yes') == None and request.POST.get('no') == None:
 		for key in list(request.session.keys()):
 			del request.session[key]
@@ -211,7 +213,10 @@ def question(request):
 
 	#MODIFICAR LA PREGUNTA
 
-	context = {'question' : request.session.get('mensaje',0) }
+	context = {
+		'number': request.session.get('question_number',0),
+		'question' : request.session.get('mensaje',0) 
+		}
 	#print(request.session.get('candidatos',0))
 
 	if request.session.get('personaje') != None:
