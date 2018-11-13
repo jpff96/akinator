@@ -1,0 +1,3 @@
+{
+    "python.pythonPath": "${workspaceFolder}\\akinator_env\\Scripts\\python.exe"
+}
