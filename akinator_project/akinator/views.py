@@ -23,7 +23,7 @@ def init(request):
 	global instrumento
 	instrumento = "¿Toca la/el "
 	global p_Interior
-	p_Interior = "¿Es del Interior? "
+	p_Interior = " es del Interior? "
 	global ciudad_nacimiento
 	ciudad_nacimiento = "¿Nació en "
 	global barrio
@@ -33,7 +33,7 @@ def init(request):
 	global materia
 	materia = "¿Su profesor/a da la materia "
 	global asesora
-	asesora = "¿Es asesor "
+	asesora = " es asesor?"
 	global carrera
 	carrera = "¿Estudia la carrera "
 	global generacion
@@ -43,11 +43,11 @@ def init(request):
 	global secundaria
 	secundaria = "¿Hizo la secundaria en "
 	global fellow
-	fellow = "¿Es su personaje un fellow?"
+	fellow = " es su personaje un fellow?"
 	global ayudante
-	ayudante = "¿Es su personaje ayudante de algún curso?"
+	ayudante = " es su personaje ayudante de algún curso?"
 	global al_dia
-	al_dia = "¿Está con la carrera al día?"
+	al_dia = " está con la carrera al día?"
 	global caracteristica
 	global mensaje
 	global primera_vez
@@ -65,25 +65,19 @@ def init(request):
 	["Carrasco", "Pocitos", "Parque Miramar", "Prado", "Colonia Nicolich", "Cerro", "Malvin", "Centro", "Punta Carretas", "Ituzaingo", "Unión", "Punta Gorda", "Barra de Carrasco","Brazo Oriental","Buceo","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid"],
 	["Estudiante","Profesor", "Funcionario","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid"],	
 	["Sistemas Distribuidos", "Matlab", "Análisis Matemático","Sistemas Lineales","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid"],
-	["Si", "No", "Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid"],
 	["Ingenieria Telematica", "Ingenieria Industrial", "Ingenieria Civil","Ingenieria Informatica","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid"],
 	["2016","2018","2014","2017","2015","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid"],
 	["Rafael Sotelo", "Daniel Jurburg", "Pepe Díaz", "Viviana Rocco", "Claudio Ruibal", "Adrián Santilli", "Martín Tanco","Analía Conde", "Fernando Machado", "Eduardo", "Gerardo Beltrame","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid"],
 	["PREU","La Mennais", "Crandon", "Stella Maris College", "Colegio Salesiano", "Scuola Italiana", "Instituto Uruguayo Argentino", "British School", "Canelones", "Colegio Maldonado", "Colegio y liceo nuestra señora del rosario", "Colegio Aleman","IHHC", "Liceo Dptal Nro. 1 Dra. Celia Pomoli", "Juan XXIII", "Colegio Seminario", "Saint Brendan's School", "Liceo 1 Paso de los Toros", "Liceo Damaso", "Liceo 1","Liceo departamental de San José de Mayo", "Elbio Fernández","Santa Rita", "Santa Luisa de Marillac","PUC","Colegio San Pablo","IAVA","Pinar 1"],
-	["Si", "No", "Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid"],
-	["Si", "No", "Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid"],
-	["Si", "No", "Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid","Invalid"]
 	])
 	global preguntas
-	preguntas = np.array([año_nacimiento,p_Sexo,p_Pelo, altura, p_Deporte, vacaciones, instrumento, p_Interior, ciudad_nacimiento, barrio, rol, materia, asesora, carrera, generacion,asesor, secundaria, fellow, ayudante, al_dia])
+	preguntas = np.array([año_nacimiento,p_Sexo,p_Pelo, altura, p_Deporte, vacaciones, instrumento, p_Interior, ciudad_nacimiento, barrio, rol, materia, carrera, generacion,asesor, secundaria])
 
 	global tabla
-	tabla = np.array([['Nombre completo','año nacimiento','sexo','color de pelo','altura','deporte','vacaciones','instrumento','int/montevideo','departamento','barrio','profesion','materias dadas','asesora','carrera','comienzo carrera','asesor','secundaria','fellow','ayudante','avance carrera']])
+	tabla = np.array([['Nombre completo','año nacimiento','sexo','color de pelo','altura','deporte','vacaciones','instrumento','int/montevideo','departamento','barrio','profesion','materias dadas','carrera','comienzo carrera','asesor','secundaria']])
 	dataReader = csv.reader(open("./akinator/static/akinator_data.csv"), delimiter=',', quotechar='"')
 	for row in dataReader:
 		user=Users()
-		if (row[0] == 'Ignacio Blanco' or row[0] == 'Juan Fajardo'):
-			print(row)
 		tabla = np.insert(tabla,np.size(tabla,0),row,axis=0)
 	global repeticiones
 	repeticiones =  np.zeros((np.size(opciones,0),np.size(opciones,1)), dtype=int)
@@ -107,6 +101,7 @@ def init(request):
 
 # Create your views here.
 def home(request):
+	request.session['question_number'] = 1
 	return render(request,'akinator/index.html')
 
 
@@ -132,13 +127,18 @@ def pregunta_seleccionada(request):
 					a = [i,j]
 					posibles = np.insert(posibles,np.size(posibles,0),a,axis=0)
 
-		min_pos = posibles[random.randint(0,len(posibles)-1),:]		
+		min_pos = posibles[random.randint(0,len(posibles)-1),:]	
 		pos_caract = min_pos.tolist()
 		caracteristica = opciones[pos_caract[0],pos_caract[1]]
 
 		request.session['pos_caract'] = pos_caract
 		#answersReader = csv.reader(open("./akinator/static/Preguntas.csv"), delimiter=';', quotechar='"')
-		mensaje = preguntas[pos_caract[0]] + ' ' + caracteristica + '?'
+		if (caracteristica == "Ninguno"):
+			mensaje = "¿Es verdad que su personaje no toca ningún instrumento?"
+		elif (caracteristica =="Si" or caracteristica =="No" ):
+			mensaje = "¿"+ caracteristica + " "+preguntas[pos_caract[0]]
+		else:
+			mensaje = preguntas[pos_caract[0]] + ' ' + caracteristica + '?'
 		request.session['mensaje'] = mensaje
 		request.session['caracteristica'] = caracteristica
 
@@ -151,40 +151,61 @@ def prototipo_akinator(request):
 	pos_caract = request.session.get('pos_caract',0)
 	eliminar = np.asarray(request.session.get('eliminar',0))
 
+
 	if np.size(candidatos,0) > 1:
 		if resp == 'Si':
 
 			indexes = np.argwhere(candidatos==caracteristica)
-			filas = np.zeros(len(indexes), dtype=int)
+			indexes_2 = np.argwhere(candidatos[:,pos_caract[0]]=='Invalid')
+			print('indexes_2')
+			print(indexes_2)
+			filas = np.zeros(len(indexes)+len(indexes_2), dtype=int)
 			contador = 0
 			for j in indexes:
 				filas[contador] = j[0]
 				contador = contador + 1
+
+			for h in indexes_2:
+				filas[contador] = h[0]
+				contador = contador + 1
+			print('filas')
+			print(len(filas))
+			print(filas)
 			contador = 0
 			eliminar = np.setdiff1d(np.arange(0,np.size(candidatos,0),1),filas)
 			request.session['eliminar'] = eliminar.tolist()
 		# eliminar = np.subtract(np.arange(0,np.size(candidatos,0),1),filas)
 		else:
-			indexes = np.argwhere(candidatos==caracteristica)
-			print(candidatos)
-			filas = np.zeros(len(indexes), dtype=int)
+			indexes = np.argwhere(candidatos==caracteristica )
+			indexes_2 = np.argwhere(candidatos[:,pos_caract[0]]=='Invalid')
+			filas = np.zeros(len(indexes)+len(indexes_2), dtype=int)
+			print('filas')
+			print(len(filas))
+			print(filas)
 			contador = 0
 			for j in indexes:
 				filas[contador] = j[0]
 				contador = contador + 1
+			print('contador')
+			print(contador)
+			print('indexes_2')
+			print(len(indexes_2))
+			for h in indexes_2:
+				filas[contador] = h[0]
+				contador = contador + 1
 			contador = 0
 			eliminar = filas
 			request.session['eliminar'] = eliminar.tolist()
+
+		print(eliminar)
 		
 		for i in range(0,np.size(eliminar,0)):
 			indx = eliminar[i] - i
 			candidatos = np.delete(candidatos,indx,0)
 			request.session['candidatos'] = candidatos.tolist()
-		
+		print('dadad')
 		repeticiones = np.zeros((np.size(opciones,0),np.size(opciones,1)), dtype=int)
-		print(eliminar)
-		print('candidatos')
-		print(candidatos)
+
 		for j in range(0,np.size(opciones,0)-1):
 			for k in range(0,np.size(opciones,1)):
 				a = np.argwhere(opciones[j,k] == candidatos)
@@ -193,12 +214,15 @@ def prototipo_akinator(request):
 
 		request.session['estado'] = repeticiones.tolist()
 		estado[pos_caract] = 0 
+	
+		print(candidatos)
+		print(np.size(candidatos,0))
 	if np.size(candidatos,0) == 1 :
 		request.session['personaje'] = candidatos[0,0]
 
 def question(request):
-
 	request.session['question_number'] += 1
+
 	if request.POST.get('yes') == None and request.POST.get('no') == None:
 		for key in list(request.session.keys()):
 			del request.session[key]

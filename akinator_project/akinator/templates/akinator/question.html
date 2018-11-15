@@ -16,7 +16,7 @@
     </header>
     <div id="question_div">
         <div id="questionGenius">
-            <img src="/static/images/main_akinator.png" alt="">
+            <img src="/static/images/main_dani.png" alt="">
         </div>
         <div id="questionPlace">
             <div id="questionNumber">
@@ -25,7 +25,7 @@
             <p id="questionText">{{question}} </p>
         </div>
         <div id="answers" >
-            <form class=form_answer action="{% url 'akinator-question' %}" method="post">
+            <form class=form_answer_2 action="{% url 'akinator-question' %}" method="post">
                 {% csrf_token %}
                 {{ form.s1_q5_resin_type }}
                 <button id="yes" type="submit" name="yes" value="Si">
@@ -33,7 +33,7 @@
                 </button>
             </form>
 
-            <form class=form_answer action="{% url 'akinator-question' %}" method="post">
+            <form class=form_answer_2 action="{% url 'akinator-question' %}" method="post">
                 {% csrf_token %}
                 {{ form.s1_q5_resin_type }}
                 <button id="no" type="submit" value='No' name = "no">

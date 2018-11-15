@@ -13,21 +13,26 @@
 <body>
     <header>
         <img src="/static/images/logo_akinator.png" alt="">
-    </header>
+    </header> 
     <div id="answer_div">
+        <div id="akinatorGenius" style="top:-5%">
+                <img src="/static/images/main_dani.png" alt="">
+        </div>
         <div id="text_answer">
             <p type='text'>Estas pensando en:{{personaje}}</p>
         </div>
-        <form> 
-            <button id="wrong" formaction="{% url 'akinator-question' %}">
-                NO
-            </button> 
-        </form>
-        <form>
-            <button id="correct" formaction="{% url 'akinator-home' %}">
-                SI
-            </button>
-        </form>
+        <div id="answers_2" >
+            <form class=form_answer> 
+                <button id="wrong" formaction="{% url 'akinator-question' %}">
+                    NO
+                </button> 
+            </form>
+            <form class=form_answer>
+                <button id="correct" formaction="{% url 'akinator-home' %}">
+                    SI
+                </button>
+            </form>
+        </div>
     </div>
     <footer>
 
